@@ -3,19 +3,19 @@ import pandas as pd
 import random
 import os
 
-st.set_page_config(page_title="MicroRepaso Pro", layout="wide")
+st.set_page_config(page_title="PatoRepaso Pro", layout="wide")
 
 # Función para cargar el CSV generado
 @st.cache_data
 def cargar_datos():
-    if os.path.exists('datos_microbio.csv'):
-        return pd.read_csv('datos_microbio.csv')
+    if os.path.exists('datos_patologia.csv'):
+        return pd.read_csv('datos_patologia.csv')
     return None
 
 df = cargar_datos()
 
 if df is None:
-    st.error("Aún no tienes el archivo 'datos_microbio.csv'. Ejecuta primero el script de limpieza.")
+    st.error("Aún no tienes el archivo 'datos_patologia.csv'. Ejecuta primero el script de limpieza.")
 else:
     st.sidebar.title("Navegación")
     modo = st.sidebar.radio("Ir a:", ["Modo Estudio (Todos)", "Modo Examen (Flashcards)"])

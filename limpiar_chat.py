@@ -4,7 +4,7 @@ import os
 
 def procesar_chat():
     archivo_txt = '_chat.txt'  # Asegúrate de que el archivo se llame así
-    archivo_csv = 'datos_microbio.csv'
+    archivo_csv = 'datos_patologia.csv'
     
     if not os.path.exists(archivo_txt):
         print(f"❌ Error: No encuentro el archivo '{archivo_txt}' en esta carpeta.")
