@@ -34,7 +34,7 @@ else:
                 if os.path.exists(path_foto):
                     st.image(path_foto, caption=row['Descripcion'])
                 else:
-                    st.warning(f"No falta la foto: {row['Imagen']}")
+                    st.warning(f"Falta la foto: {row['Imagen']}")
 
     else:
         st.title("🧪 Modo Flashcard")
