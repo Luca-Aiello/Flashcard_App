@@ -1,84 +1,44 @@
-import streamlit as st
 import pandas as pd
-import random
 import os
 
-st.set_page_config(page_title="PatoRepaso Pro", layout="wide")
+def rellenar_muestras_faltantes():
+    archivo_csv = 'datos_patologia.csv'
+    carpeta_fotos = 'fotos'
+    
+    if not os.path.exists(archivo_csv):
+        print(f"❌ No se encontró {archivo_csv}")
+        return
 
-# Función para cargar el CSV generado
-@st.cache_data
-def cargar_datos():
-    if os.path.exists('datos_patologia.csv'):
-        return pd.read_csv('datos_patologia.csv')
-    return None
-
-df = cargar_datos()
-
-if df is None:
-    st.error("Aún no tienes el archivo 'datos_patologia.csv'. Ejecuta primero el script de limpieza.")
-else:
-    st.sidebar.title("Navegación")
-    modo = st.sidebar.radio("Ir a:", ["Modo Estudio (Todos)", "Modo Examen (Flashcards)"])
-
-    if modo == "Modo Estudio (Todos)":
-        # Título y contador dinámico con efecto tenue
-        col_titulo, col_contador = st.columns([3, 2])
-        with col_titulo:
-            st.title("📚 Galería de Muestras")
-        with col_contador:
-            st.markdown(
-                f'<p style="color: grey; opacity: 0.5; font-size: 18px; margin-top: 40px;">'
-                f'({len(df)} patógenos disponibles)</p>', 
-                unsafe_allow_html=True
-            )
-            
-        def limpiar_busqueda():
-            st.session_state.texto_busqueda = ""
-
-        # Botón de limpieza: solo aparece si hay algo escrito
-        if st.session_state.get('texto_busqueda'):
-            col_esp, col_btn = st.columns([5, 1])
-            with col_btn:
-                st.button("Limpiar 🔄", on_click=limpiar_busqueda, use_container_width=True)
-
-        st.text_input("Buscar patógeno...", key="texto_busqueda", placeholder="Ej: 124, equino...")
-
-        termino = st.session_state.texto_busqueda
-        df_filtrado = df[df['Descripcion'].str.contains(termino, case=False)]
+    # 1. Cargar lo que ya existe
+    df = pd.read_csv(archivo_csv)
+    fotos_en_csv = set(df['Imagen'].astype(str).tolist())
+    
+    # 2. Listar fotos reales en la carpeta
+    if not os.path.exists(carpeta_fotos):
+        print(f"❌ No se encontró la carpeta '{carpeta_fotos}'")
+        return
         
-        # Grid de imágenes
-        cols = st.columns(3)
-        for i, (idx, row) in enumerate(df_filtrado.iterrows()):
-            with cols[i % 3]:
-                path_foto = os.path.join("fotos", row['Imagen'])
-                if os.path.exists(path_foto):
-                    # use_container_width=True para que se vea perfecto en móviles
-                    st.image(path_foto, caption=row['Descripcion'], use_container_width=True)
-                else:
-                    st.warning(f"Falta la foto: {row['Imagen']}")
-
+    fotos_en_carpeta = [f for f in os.listdir(carpeta_fotos) 
+                        if f.lower().endswith(('.jpg', '.jpeg', '.png'))]
+    
+    nuevos_registros = []
+    
+    # 3. Ver cuáles faltan
+    for foto in fotos_en_carpeta:
+        if foto not in fotos_en_csv:
+            nuevos_registros.append({
+                "Imagen": foto,
+                "Descripcion": "Información en la imagen 🖼️"
+            })
+    
+    # 4. Guardar cambios
+    if nuevos_registros:
+        df_nuevos = pd.DataFrame(nuevos_registros)
+        df_final = pd.concat([df, df_nuevos], ignore_index=True)
+        df_final.to_csv(archivo_csv, index=False)
+        print(f"✅ ¡Éxito! Se agregaron {len(nuevos_registros)} fotos nuevas.")
     else:
-        st.title("🧪 Modo Flashcard")
-        st.write("Identifica la muestra y luego presiona el botón para verificar.")
+        print("✨ Todas las fotos ya estaban registradas.")
 
-        if 'indice' not in st.session_state:
-            st.session_state.indice = random.randint(0, len(df)-1)
-
-        fila = df.iloc[st.session_state.indice]
-        path_foto = os.path.join("fotos", fila['Imagen'])
-
-        if os.path.exists(path_foto):
-            # Imagen centrada y adaptativa
-            st.image(path_foto, use_container_width=True)
-            
-            if st.button("Revelar respuesta 🔍"):
-                st.info(f"**Identificación:** {fila['Descripcion']}")
-            
-            if st.button("Siguiente muestra ➡️"):
-                st.session_state.indice = random.randint(0, len(df)-1)
-                st.rerun()
-        else:
-            st.error(f"No se encuentra la foto: {fila['Imagen']}")
-            if st.button("Saltar muestra"):
-                st.session_state.indice = random.randint(0, len(df)-1)
-                st.rerun()
+if __name__ == "__main__":
+    rellenar_muestras_faltantes()
