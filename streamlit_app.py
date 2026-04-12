@@ -5,8 +5,7 @@ import os
 
 st.set_page_config(page_title="PatoRepaso Pro", layout="wide")
 
-# Función para cargar el CSV generado
-@st.cache_data
+@st.cache_data(ttl=600)  
 def cargar_datos():
     if os.path.exists('datos_patologia.csv'):
         return pd.read_csv('datos_patologia.csv')
