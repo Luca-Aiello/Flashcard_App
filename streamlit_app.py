@@ -26,18 +26,28 @@ else:
             def limpiar_busqueda():
                 st.session_state.texto_busqueda = ""
 
-            if st.session_state.get('texto_busqueda', ''):
-                col_espacio, col_boton = st.columns([5, 1])
-                with col_boton:
-                    st.button("Limpiar búsqueda 🔄", on_click=limpiar_busqueda, use_container_width=True)
 
-            busqueda = st.text_input(
-                "Buscar patógeno...", 
-                key="texto_busqueda",
-                placeholder="Ej: 124, equino, purulenta..."
-            )
+            if st.session_state.get('texto_busqueda'):
+                col_esp, col_btn = st.columns([5, 1])
+                with col_btn:
+                    st.button("Limpiar 🔄", on_click=limpiar_busqueda, use_container_width=True)
 
-            df_filtrado = df[df['Descripcion'].str.contains(busqueda, case=False)]
+            st.text_input("Buscar patógeno...", key="texto_busqueda", placeholder="Ej: 124, equino...")
+
+
+            termino = st.session_state.texto_busqueda
+            df_filtrado = df[df['Descripcion'].str.contains(termino, case=False)]
+            
+            st.caption(f"Mostrando {len(df_filtrado)} muestras.")
+
+            cols = st.columns(3)
+            for i, (idx, row) in enumerate(df_filtrado.iterrows()):
+                with cols[i % 3]:
+                    path_foto = os.path.join("fotos", row['Imagen'])
+                    if os.path.exists(path_foto):
+                        st.image(path_foto, caption=row['Descripcion'])
+                    else:
+                        st.warning(f"Falta la foto: {row['Imagen']}")
 
     else:
         st.title("🧪 Modo Flashcard")
