@@ -21,34 +21,23 @@ else:
     modo = st.sidebar.radio("Ir a:", ["Modo Estudio (Todos)", "Modo Examen (Flashcards)"])
 
     if modo == "Modo Estudio (Todos)":
-        st.title("📚 Galería de Muestras")
-        
-        col_busqueda, col_reset = st.columns([4, 1])
-        
-        if 'texto_busqueda' not in st.session_state:
-            st.session_state.texto_busqueda = ""
+            st.title("📚 Galería de Muestras")
+            
+            def limpiar_busqueda():
+                st.session_state.texto_busqueda = ""
 
-        with col_busqueda:
+            if st.session_state.get('texto_busqueda', ''):
+                col_espacio, col_boton = st.columns([5, 1])
+                with col_boton:
+                    st.button("Limpiar búsqueda 🔄", on_click=limpiar_busqueda, use_container_width=True)
+
             busqueda = st.text_input(
                 "Buscar patógeno...", 
-                key="texto_busqueda") 
+                key="texto_busqueda",
+                placeholder="Ej: 124, equino, purulenta..."
+            )
 
-        with col_reset:
-            st.write("##") 
-            if st.button("Volver al inicio 🔄"):
-                st.session_state.texto_busqueda = ""
-                st.rerun()
-
-        df_filtrado = df[df['Descripcion'].str.contains(busqueda, case=False)]
-        
-        cols = st.columns(3)
-        for i, (idx, row) in enumerate(df_filtrado.iterrows()):
-            with cols[i % 3]:
-                path_foto = os.path.join("fotos", row['Imagen'])
-                if os.path.exists(path_foto):
-                    st.image(path_foto, caption=row['Descripcion'])
-                else:
-                    st.warning(f"Falta la foto: {row['Imagen']}")
+            df_filtrado = df[df['Descripcion'].str.contains(busqueda, case=False)]
 
     else:
         st.title("🧪 Modo Flashcard")
