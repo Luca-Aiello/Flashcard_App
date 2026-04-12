@@ -21,16 +21,13 @@ else:
     modo = st.sidebar.radio("Ir a:", ["Modo Estudio (Todos)", "Modo Examen (Flashcards)"])
 
     if modo == "Modo Estudio (Todos)":
-        # Título y contador dinámico con efecto tenue
-        col_titulo, col_contador = st.columns([3, 2])
-        with col_titulo:
-            st.title("📚 Galería de Muestras")
-        with col_contador:
-            st.markdown(
-                f'<p style="color: grey; opacity: 0.5; font-size: 18px; margin-top: 40px;">'
-                f'({len(df)} patógenos disponibles)</p>', 
-                unsafe_allow_html=True
-            )
+        st.title("📚 Galería de Muestras")
+        
+        st.markdown(
+            f'<p style="color: grey; opacity: 0.5; font-size: 16px; margin-top: -20px; margin-bottom: 25px;">'
+            f'({len(df)} patógenos disponibles)</p>', 
+            unsafe_allow_html=True
+        )
             
         def limpiar_busqueda():
             st.session_state.texto_busqueda = ""
