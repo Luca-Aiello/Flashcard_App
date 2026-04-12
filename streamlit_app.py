@@ -22,13 +22,27 @@ else:
 
     if modo == "Modo Estudio (Todos)":
         st.title("📚 Galería de Muestras")
-        # Buscador
-        busqueda = st.text_input("Buscar patógeno...")
+        
+        col_busqueda, col_reset = st.columns([4, 1])
+        
+        if 'texto_busqueda' not in st.session_state:
+            st.session_state.texto_busqueda = ""
+
+        with col_busqueda:
+            busqueda = st.text_input(
+                "Buscar patógeno...", 
+                key="texto_busqueda") 
+
+        with col_reset:
+            st.write("##") 
+            if st.button("Volver al inicio 🔄"):
+                st.session_state.texto_busqueda = ""
+                st.rerun()
+
         df_filtrado = df[df['Descripcion'].str.contains(busqueda, case=False)]
         
-        # Mostrar en cuadrícula (grid)
         cols = st.columns(3)
-        for i, row in df_filtrado.iterrows():
+        for i, (idx, row) in enumerate(df_filtrado.iterrows()):
             with cols[i % 3]:
                 path_foto = os.path.join("fotos", row['Imagen'])
                 if os.path.exists(path_foto):
@@ -49,7 +63,7 @@ else:
         if os.path.exists(path_foto):
             st.image(path_foto, width=500)
             
-            if st.button("REVELAR RESPUESTA"):
+            if st.button("Revelar respuesta 🔍"):
                 st.info(f"**Identificación:** {fila['Descripcion']}")
             
             if st.button("Siguiente muestra ➡️"):
