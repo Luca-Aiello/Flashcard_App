@@ -44,10 +44,10 @@ def procesar_chat_estricto():
                     "Descripcion": texto_adjunto
                 })
                 
-                puedo_anexar = True
+                puedo_anexar = True 
                 ultimo_usuario = usuario
             
-            elif puedo_anexar and usuario == ultimo_usuario:
+            elif puedo_anexar and usuario == ultimo_usuario and "<adjunto:" not in contenido:
                 if "omitido" not in contenido.lower() and len(contenido) > 1:
                     original = resultados[-1]["Descripcion"]
                     
@@ -63,7 +63,7 @@ def procesar_chat_estricto():
     for r in resultados:
         if not r["Descripcion"]:
             r["Descripcion"] = "Información en la imagen 🖼️"
-
+    
     with open(archivo_csv, 'w', newline='', encoding='utf-8') as f:
         writer = csv.DictWriter(f, fieldnames=["Imagen", "Descripcion"])
         writer.writeheader()
