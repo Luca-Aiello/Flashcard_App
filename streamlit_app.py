@@ -46,7 +46,6 @@ else:
             with cols[i % 3]:
                 path_foto = os.path.join("fotos", row['Imagen'])
                 if os.path.exists(path_foto):
-                    # use_container_width=True para que se vea perfecto en móviles
                     st.image(path_foto, caption=row['Descripcion'], use_container_width=True)
                 else:
                     st.warning(f"Falta la foto: {row['Imagen']}")
@@ -62,7 +61,6 @@ else:
         path_foto = os.path.join("fotos", fila['Imagen'])
 
         if os.path.exists(path_foto):
-            # Imagen centrada y adaptativa
             st.image(path_foto, use_container_width=True)
             
             if st.button("Revelar respuesta 🔍"):
