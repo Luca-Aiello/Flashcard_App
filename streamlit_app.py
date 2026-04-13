@@ -31,7 +31,6 @@ else:
         def limpiar_busqueda():
             st.session_state.texto_busqueda = ""
 
-        # Botón de limpieza: solo aparece si hay algo escrito
         if st.session_state.get('texto_busqueda'):
             col_esp, col_btn = st.columns([5, 1])
             with col_btn:
@@ -42,7 +41,6 @@ else:
         termino = st.session_state.texto_busqueda
         df_filtrado = df[df['Descripcion'].str.contains(termino, case=False)]
         
-        # Grid de imágenes
         cols = st.columns(3)
         for i, (idx, row) in enumerate(df_filtrado.iterrows()):
             with cols[i % 3]:

@@ -9,11 +9,9 @@ def rellenar_muestras_faltantes():
         print(f"❌ No se encontró {archivo_csv}")
         return
 
-    # 1. Cargar lo que ya existe
     df = pd.read_csv(archivo_csv)
     fotos_en_csv = set(df['Imagen'].astype(str).tolist())
     
-    # 2. Listar fotos reales en la carpeta
     if not os.path.exists(carpeta_fotos):
         print(f"❌ No se encontró la carpeta '{carpeta_fotos}'")
         return
@@ -23,7 +21,6 @@ def rellenar_muestras_faltantes():
     
     nuevos_registros = []
     
-    # 3. Ver cuáles faltan
     for foto in fotos_en_carpeta:
         if foto not in fotos_en_csv:
             nuevos_registros.append({
@@ -31,7 +28,6 @@ def rellenar_muestras_faltantes():
                 "Descripcion": "Información en la imagen 🖼️"
             })
     
-    # 4. Guardar cambios
     if nuevos_registros:
         df_nuevos = pd.DataFrame(nuevos_registros)
         df_final = pd.concat([df, df_nuevos], ignore_index=True)
